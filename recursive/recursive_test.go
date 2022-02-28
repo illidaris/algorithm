@@ -79,4 +79,9 @@ func TestRecursive(t *testing.T) {
 	if !con1 || !con2 || !con3 {
 		t.Error("no correct")
 	}
+	nodes := make([]INode, 0)
+	Flat(root, &nodes)
+	if len(nodes) != 8 {
+		t.Error("len is not 8")
+	}
 }

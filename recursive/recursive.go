@@ -6,9 +6,18 @@ func Recursive(root INode, nodes []INode) {
 			root.AddChild(node)
 		}
 	}
-	if children := root.GetChildren(); children != nil && len(children) > 0 {
+	if children := root.GetChildren(); len(children) > 0 {
 		for _, child := range root.GetChildren() {
 			Recursive(child, nodes)
+		}
+	}
+}
+
+func Flat(root INode, nodes *[]INode) {
+	*nodes = append(*nodes, root)
+	if children := root.GetChildren(); len(children) > 0 {
+		for _, child := range root.GetChildren() {
+			Flat(child, nodes)
 		}
 	}
 }
