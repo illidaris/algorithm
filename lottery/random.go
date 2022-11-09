@@ -20,17 +20,19 @@ func (s *Random) Invoke(source []interface{}) []interface{} {
 			break
 		}
 		index := s.Randm(subLen)
-		switch {
-		case index == 0:
-			tokens = append(tokens, temp[0])
-			temp = temp[1:]
-		case index+1 == subLen:
-			tokens = append(tokens, temp[index])
-			temp = temp[:index]
-		default:
-			tokens = append(tokens, temp[index-1])
-			temp = append(temp[:index-1], temp[index:]...)
-		}
+		tokens = append(tokens, temp[index])
+		temp = DeleteSlice(temp, index)
 	}
 	return tokens
+}
+
+func DeleteSlice(s []interface{}, index int) []interface{} {
+	j := 0
+	for i, v := range s {
+		if i != index {
+			s[j] = v
+			j++
+		}
+	}
+	return s[:j]
 }

@@ -31,7 +31,7 @@ func TestDraw(t *testing.T) {
 			})
 
 			convey.Convey("no random pick less then source len ", func() {
-				result := Draw(ids, total-1)
+				result := Draw(ids, uint(total-1))
 				bs, _ := json.Marshal(result)
 				fmt.Printf("%s", string(bs))
 				convey.So(len(result), convey.ShouldEqual, total-1)
@@ -41,7 +41,7 @@ func TestDraw(t *testing.T) {
 			})
 
 			convey.Convey("no random pick more then source len", func() {
-				result := Draw(ids, total+1)
+				result := Draw(ids, uint(total+1))
 				bs, _ := json.Marshal(result)
 				fmt.Printf("%s", string(bs))
 				convey.So(len(result), convey.ShouldEqual, total)
@@ -69,14 +69,14 @@ func TestDraw(t *testing.T) {
 				})
 
 				convey.Convey(fmt.Sprintf("%s pick less then source len", key), func() {
-					result := Draw(ids, total-1, example...)
+					result := Draw(ids, uint(total-1), example...)
 					bs, _ := json.Marshal(result)
 					fmt.Printf("%s", string(bs))
 					convey.So(len(result), convey.ShouldEqual, total-1)
 				})
 
 				convey.Convey(fmt.Sprintf("%s pick more then source len", key), func() {
-					result := Draw(ids, total+1, example...)
+					result := Draw(ids, uint(total+1), example...)
 					bs, _ := json.Marshal(result)
 					fmt.Printf("%s", string(bs))
 					convey.So(len(result), convey.ShouldEqual, total)
@@ -89,7 +89,7 @@ func TestDraw(t *testing.T) {
 
 func BenchmarkDraw(b *testing.B) {
 	ids := []interface{}{}
-	total := 100000
+	total := 1000000
 	k := &Knuth{}
 	k.Randm = func(max int) int {
 		return rand.Intn(max)
@@ -102,7 +102,7 @@ func BenchmarkDraw(b *testing.B) {
 		ids = append(ids, i)
 	}
 	for n := 0; n < b.N; n++ {
-		result := Draw(ids, 1000, k, r)
+		result := Draw(ids, 1000, k)
 		if len(result) < 1000 {
 			b.Error("less then 1000")
 		}

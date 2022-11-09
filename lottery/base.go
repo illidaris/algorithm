@@ -9,7 +9,7 @@ type Base struct {
 }
 
 // Draw draw by lottery func and pick some item
-func Draw(source []interface{}, num int, ls ...ILottery) []interface{} {
+func Draw(source []interface{}, num uint, ls ...ILottery) []interface{} {
 	if num == 0 {
 		return nil
 	}
@@ -17,8 +17,8 @@ func Draw(source []interface{}, num int, ls ...ILottery) []interface{} {
 	for _, l := range ls {
 		result = l.Invoke(source)
 	}
-	if max := len(result); num > max {
-		num = len(result)
+	if max := uint(len(result)); num > max {
+		num = max
 	}
 	return result[:num]
 }
