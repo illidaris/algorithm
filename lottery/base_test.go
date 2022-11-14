@@ -26,12 +26,12 @@ func TestDraw(t *testing.T) {
 			}
 
 			convey.Convey("no random pick 0", func() {
-				result := Draw(ids, 0)
+				result := DrawNum(ids, 0)
 				convey.So(result, convey.ShouldBeNil)
 			})
 
 			convey.Convey("no random pick less then source len ", func() {
-				result := Draw(ids, uint(total-1))
+				result := DrawNum(ids, uint(total-1))
 				bs, _ := json.Marshal(result)
 				fmt.Printf("%s", string(bs))
 				convey.So(len(result), convey.ShouldEqual, total-1)
@@ -41,7 +41,7 @@ func TestDraw(t *testing.T) {
 			})
 
 			convey.Convey("no random pick more then source len", func() {
-				result := Draw(ids, uint(total+1))
+				result := DrawNum(ids, uint(total+1))
 				bs, _ := json.Marshal(result)
 				fmt.Printf("%s", string(bs))
 				convey.So(len(result), convey.ShouldEqual, total)
@@ -64,19 +64,19 @@ func TestDraw(t *testing.T) {
 			examples := map[string][]ILottery{"knuth": {k}, "random": {r}, "mixed": {k, r}}
 			for key, example := range examples {
 				convey.Convey(fmt.Sprintf("%s pick 0", key), func() {
-					result := Draw(ids, 0, example...)
+					result := DrawNum(ids, 0, example...)
 					convey.So(result, convey.ShouldBeNil)
 				})
 
 				convey.Convey(fmt.Sprintf("%s pick less then source len", key), func() {
-					result := Draw(ids, uint(total-1), example...)
+					result := DrawNum(ids, uint(total-1), example...)
 					bs, _ := json.Marshal(result)
 					fmt.Printf("%s", string(bs))
 					convey.So(len(result), convey.ShouldEqual, total-1)
 				})
 
 				convey.Convey(fmt.Sprintf("%s pick more then source len", key), func() {
-					result := Draw(ids, uint(total+1), example...)
+					result := DrawNum(ids, uint(total+1), example...)
 					bs, _ := json.Marshal(result)
 					fmt.Printf("%s", string(bs))
 					convey.So(len(result), convey.ShouldEqual, total)
@@ -102,7 +102,7 @@ func BenchmarkDraw(b *testing.B) {
 		ids = append(ids, i)
 	}
 	for n := 0; n < b.N; n++ {
-		result := Draw(ids, 1000, k)
+		result := DrawNum(ids, 1000, k)
 		if len(result) < 1000 {
 			b.Error("less then 1000")
 		}
