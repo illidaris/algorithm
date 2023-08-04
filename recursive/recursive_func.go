@@ -2,28 +2,31 @@ package recursive
 
 import (
 	"context"
+	"errors"
+	"fmt"
 )
 
-func RecursiveFuncEmit(ctx context.Context, title []string, req ISetPage, maxNum uint, f func(ctx context.Context, req ISetPage) ([][]string, uint)) (<-chan []string, error) {
-	outCh := make(chan []string, 10)
+type Result struct {
+	Data interface{}
+	Err  error
+}
+
+func RecursiveFuncEmit(ctx context.Context, req ISetPage, maxNum uint, f func(ctx context.Context, req ISetPage) (interface{}, uint, error)) (<-chan Result, error) {
+	outCh := make(chan Result, 10)
 	go func() {
 		defer func() {
 			if rcvErr := recover(); rcvErr != nil {
+				outCh <- Result{Err: errors.New(fmt.Sprintln("panic", rcvErr))}
 				println(rcvErr)
 			}
 			if outCh != nil {
 				close(outCh)
 			}
 		}()
-		if len(title) > 0 {
-			outCh <- title
-		}
 		RecursiveFunc(func(b uint) uint {
 			req.SetPage(b)
-			rows, total := f(ctx, req)
-			for _, row := range rows {
-				outCh <- row
-			}
+			data, total, err := f(ctx, req)
+			outCh <- Result{Data: data, Err: err}
 			return total
 		}, maxNum)
 	}()

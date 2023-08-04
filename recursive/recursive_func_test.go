@@ -11,15 +11,23 @@ import (
 func TestRecursiveFuncEmit(t *testing.T) {
 	ctx := context.Background()
 
-	ch, err := RecursiveFuncEmit(ctx, []string{"序号", "字段1", "字段2"}, &Bag{ID: 1}, 0, func(ctx context.Context, req ISetPage) ([][]string, uint) {
+	ch, err := RecursiveFuncEmit(ctx, &Bag{ID: 1}, 0, func(ctx context.Context, req ISetPage) (interface{}, uint, error) {
 		result := [][]string{{"1", "xxxxxxxxx", "ssss"}, {"2", "xxxxxxxxx", "ssss"}}
-		return result, 3
+		return result, 3, nil
 	})
 	if err != nil {
 		t.Error(err)
 	}
 	for row := range ch {
-		println(strings.Join(row, ","))
+		if row.Err != nil {
+			println(row.Err.Error())
+		}
+		if rows, ok := row.Data.([][]string); ok {
+			for _, v := range rows {
+				println(strings.Join(v, ","))
+			}
+		}
+
 	}
 
 }
