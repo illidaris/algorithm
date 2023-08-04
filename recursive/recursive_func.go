@@ -1,11 +1,20 @@
 package recursive
 
-import "context"
+import (
+	"context"
+)
 
 func RecursiveFuncEmit(ctx context.Context, title []string, req ISetPage, maxNum uint, f func(ctx context.Context, req ISetPage) ([][]string, uint)) (<-chan []string, error) {
 	outCh := make(chan []string, 10)
 	go func() {
-		defer close(outCh)
+		defer func() {
+			if rcvErr := recover(); rcvErr != nil {
+				println(rcvErr)
+			}
+			if outCh != nil {
+				close(outCh)
+			}
+		}()
 		if len(title) > 0 {
 			outCh <- title
 		}
