@@ -11,7 +11,7 @@ import (
 func TestRecursiveFuncEmit(t *testing.T) {
 	ctx := context.Background()
 
-	ch, err := RecursiveFuncEmit(ctx, []string{"序号", "字段1", "字段2"}, &Bag{ID: 1}, func(ctx context.Context, req ISetPage) ([][]string, uint) {
+	ch, err := RecursiveFuncEmit(ctx, []string{"序号", "字段1", "字段2"}, &Bag{ID: 1}, 0, func(ctx context.Context, req ISetPage) ([][]string, uint) {
 		result := [][]string{{"1", "xxxxxxxxx", "ssss"}, {"2", "xxxxxxxxx", "ssss"}}
 		return result, 3
 	})
@@ -51,7 +51,7 @@ func TestRecursion(t *testing.T) {
 			bag.ID = b
 			ch <- fmt.Sprintf("数据%v", bag)
 			return 5
-		})
+		}, 2)
 	}()
 	for v := range ch {
 		time.Sleep(time.Millisecond * 10)

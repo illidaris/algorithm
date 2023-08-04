@@ -2,7 +2,7 @@ package recursive
 
 import "context"
 
-func RecursiveFuncEmit(ctx context.Context, title []string, req ISetPage, f func(ctx context.Context, req ISetPage) ([][]string, uint)) (<-chan []string, error) {
+func RecursiveFuncEmit(ctx context.Context, title []string, req ISetPage, maxNum uint, f func(ctx context.Context, req ISetPage) ([][]string, uint)) (<-chan []string, error) {
 	outCh := make(chan []string, 10)
 	go func() {
 		defer close(outCh)
@@ -16,23 +16,26 @@ func RecursiveFuncEmit(ctx context.Context, title []string, req ISetPage, f func
 				outCh <- row
 			}
 			return total
-		})
+		}, maxNum)
 	}()
 	return outCh, nil
 }
 
-func RecursiveFunc(f func(uint) uint) uint {
-	return recursiveFunc(f, 1, 0)
+func RecursiveFunc(f func(uint) uint, maxNum uint) uint {
+	return recursiveFunc(f, 1, 1, maxNum)
 }
 
-func recursiveFunc(f func(uint) uint, begin, total uint) uint {
-	res := f(begin)
-	if begin == 1 && total == 0 {
+func recursiveFunc(f func(uint) uint, cursor, total, maxNum uint) uint {
+	res := f(cursor)
+	if cursor == 1 && res > 1 {
 		total = res
 	}
-	if begin > total-1 {
-		return 0
+	if cursor > total-1 {
+		return cursor
 	}
-	begin++
-	return recursiveFunc(f, begin, total)
+	if cursor > maxNum-1 {
+		return cursor
+	}
+	cursor++
+	return recursiveFunc(f, cursor, total, maxNum)
 }
