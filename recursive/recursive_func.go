@@ -6,7 +6,7 @@ func RecursiveFuncEmit(ctx context.Context, title []string, req ISetPage, maxNum
 	outCh := make(chan []string, 10)
 	go func() {
 		defer close(outCh)
-		if len(title) == 0 {
+		if len(title) > 0 {
 			outCh <- title
 		}
 		RecursiveFunc(func(b uint) uint {
