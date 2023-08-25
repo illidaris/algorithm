@@ -14,8 +14,8 @@ func DrawNum(source []interface{}, num uint, ls ...ILottery) []interface{} {
 		return nil
 	}
 	result := Draw(source, ls...)
-	if max := uint(len(result)); num > max {
-		num = max
+	if maxNum := uint(len(result)); num > maxNum {
+		num = maxNum
 	}
 	return result[:num]
 }

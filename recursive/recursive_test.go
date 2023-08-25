@@ -85,3 +85,20 @@ func TestRecursive(t *testing.T) {
 		t.Error("len is not 8")
 	}
 }
+
+func TestParseLinesToNodes(t *testing.T) {
+	raws := []string{"中国/上海/上海/松江", "中国/上海/上海/青浦", "中国/北京", "美国/加利福尼亚", "美国/华盛顿", "非洲", "英国/伦敦"}
+	nodesMap := ParseLinesToNodes("/", func() INameNode {
+		return &Node{}
+	}, raws...)
+	ns := []INode{}
+	for _, nodes := range nodesMap {
+		for _, node := range nodes {
+			ns = append(ns, node)
+		}
+	}
+	root := &Node{}
+	Recursive(root, ns)
+	bs, _ := json.Marshal(root)
+	println(string(bs))
+}
