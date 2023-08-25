@@ -41,7 +41,7 @@ func ParseLinesToNodes(sep string, f func() INameNode, lines ...string) map[int]
 			n := f()
 			n.SetID(c())
 			n.SetName(word)
-			n.SetRaw(line)
+			n.SetRaw(strings.Join(words[:index+1], sep))
 			nodesArr[index][word] = n
 			if index == 0 {
 				continue
