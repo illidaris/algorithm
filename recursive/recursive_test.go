@@ -2,6 +2,7 @@ package recursive
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -88,6 +89,36 @@ func TestRecursive(t *testing.T) {
 
 func TestParseLinesToNodes(t *testing.T) {
 	raws := []string{"中国/上海/上海/松江", "中国/上海/上海/青浦", "中国/北京", "美国/加利福尼亚", "美国/华盛顿", "非洲", "英国/伦敦"}
+	nodesMap := ParseLinesToNodes("/", func() INameNode {
+		return &Node{}
+	}, raws...)
+	ns := []INode{}
+	for _, nodes := range nodesMap {
+		for _, node := range nodes {
+			ns = append(ns, node)
+		}
+	}
+	root := &Node{}
+	Recursive(root, ns)
+	bs, _ := json.Marshal(root)
+	println(string(bs))
+}
+
+func TestParseLinesToNodesWithSort(t *testing.T) {
+	rawTxt := `学生/小学生/小学生
+学生/中学生/初中生
+学生/中学生/高中生
+学生/大学生/本科生
+学生/大学生/研究生
+学生/大学生/博士生
+企事业人员/普通职员/普通职员
+公职人员/公职人员/公职人员
+服务业人员/服务员/普通服务员
+服务业人员/服务员/稀有服务员
+服务业人员/服务员/传说服务员
+其他/游戏主播`
+	raws := strings.Split(rawTxt, "\n")
+	//raws := []string{"中国/上海/上海/松江", "中国/上海/上海/青浦", "中国/北京", "美国/加利福尼亚", "美国/华盛顿", "非洲", "英国/伦敦"}
 	nodesMap := ParseLinesToNodes("/", func() INameNode {
 		return &Node{}
 	}, raws...)
