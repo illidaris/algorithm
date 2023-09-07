@@ -35,19 +35,23 @@ func ParseLinesToNodes(sep string, f func() INameNode, lines ...string) map[int]
 			if _, ok := nodesArr[index]; !ok {
 				nodesArr[index] = map[string]INode{}
 			}
-			if _, ok := nodesArr[index][word]; ok {
+			raw := strings.Join(words[:index+1], sep)
+			if _, ok := nodesArr[index][raw]; ok {
 				continue
 			}
 			n := f()
 			n.SetID(c())
 			n.SetName(word)
-			n.SetRaw(strings.Join(words[:index+1], sep))
-			nodesArr[index][word] = n
+			n.SetRaw(raw)
+			nodesArr[index][raw] = n
 			if index == 0 {
 				continue
 			}
-			if parent, ok := nodesArr[index-1][words[index-1]]; ok {
-				n.SetParentID(parent.GetID())
+			if index > 0 {
+				pat := strings.Join(words[:index], sep)
+				if parent, ok := nodesArr[index-1][pat]; ok {
+					n.SetParentID(parent.GetID())
+				}
 			}
 		}
 	}
